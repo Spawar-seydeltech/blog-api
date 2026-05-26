@@ -1,8 +1,23 @@
-import express from "express";
-import { register, login } from "../controllers/authController.js";
-const router = express.Router();
+import jwt from "jsonwebtoken";
 
-router.post("/register", register);
-router.post("/login", login);
+export function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
 
-export default router;
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
+
+  try {
+    const verifiedPayload = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = verifiedPayload;
+
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired token." });
+  }
+}

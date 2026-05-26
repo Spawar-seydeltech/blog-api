@@ -1,11 +1,11 @@
 import express from "express";
-// import blogRouter from "./routes/blogs.js";
+import blogRouter from "./routes/blogs.js";
 import authRouter from "./routes/auth.js";
 import pool from "./db.js";
 const app = express();
 const PORT = 3000;
 app.use(express.json());
-// app.use("/blogs", blogRouter);
+app.use("/posts", blogRouter);
 app.use("/auth", authRouter);
 
 app.use((err, req, res, next) => {
